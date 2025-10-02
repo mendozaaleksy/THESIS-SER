@@ -4,6 +4,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "data"
 RAVDESS_DIR = DATA_DIR / "ravdess_actors"
+EMOTIONALLY_DIR = DATA_DIR / "emotionally"
 
 # Data parameters
 SAMPLE_RATE = 44100
