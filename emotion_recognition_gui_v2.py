@@ -1,8 +1,4 @@
-"""
-Emotion Recognition GUI - Version 2
-Based on CRNN_RAVDES86 copy 2.ipynb notebook logic
-Interface design from emotion_recognition_gui.py
-"""
+
 
 import os
 # Fix OpenMP duplicate library issue
@@ -31,7 +27,7 @@ print(f"Using device: {device}")
 
 class EmotionCRNN(nn.Module):
     """
-    EmotionCRNN Model - Exact implementation from notebook
+    EmotionCRNN Model 
     Multi-modal architecture with MFCC (120 features) and Prosody (11 features)
     """
     def __init__(self, num_classes=8):
@@ -363,7 +359,7 @@ class EmotionRecognitionApp(ctk.CTk):
         super().__init__()
         
         # Configure window
-        self.title("Speech Emotion Recognition GUI v2 (Notebook-Based)")
+        self.title("Speech Emotion Recognition GUI ")
         self.geometry("1200x800")
         
         # Emotion labels and colors (RAVDESS dataset)
@@ -406,7 +402,7 @@ class EmotionRecognitionApp(ctk.CTk):
         
         subtitle_label = ctk.CTkLabel(
             header_frame,
-            text="Speech Emotion Recognition - RAVDESS Dataset (GUI v2 - Notebook Implementation)",
+            text="Speech Emotion Recognition - RAVDESS Dataset",
             font=ctk.CTkFont(size=14),
             text_color="#b0b0b0"
         )
@@ -448,7 +444,7 @@ class EmotionRecognitionApp(ctk.CTk):
         
         ctk.CTkLabel(
             model_frame,
-            text="📊 120 MFCC + 11 Prosody Features",
+            text=" MFCC + Prosody Features",
             font=ctk.CTkFont(size=10),
             text_color="#95a5a6"
         ).pack(anchor="w", padx=15, pady=(0, 15))
@@ -513,7 +509,7 @@ class EmotionRecognitionApp(ctk.CTk):
         right_column = ctk.CTkFrame(content_frame, fg_color="#1e1e1e", corner_radius=15)
         right_column.pack(side="right", fill="both", expand=True)
         
-        # Prediction Result
+        # Prediction Result Header
         result_header = ctk.CTkFrame(right_column, fg_color="transparent")
         result_header.pack(fill="x", padx=20, pady=20)
         
@@ -526,45 +522,102 @@ class EmotionRecognitionApp(ctk.CTk):
         # Predict Button
         self.predict_button = ctk.CTkButton(
             right_column,
-            text="🎯 Predict Emotion",
-            font=ctk.CTkFont(size=13),
-            height=40,
-            width=180,
+            text="▶ Predict Emotion",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            height=45,
+            width=250,
             command=self.predict_emotion,
             fg_color="#27ae60",
-            hover_color="#2ecc71",
+            hover_color="#1e8449",
             state="normal",
-            corner_radius=8
+            corner_radius=10
         )
-        self.predict_button.pack(anchor="w", padx=20, pady=(0, 15))
+        self.predict_button.pack(anchor="w", padx=20, pady=(0, 20))
         
-        # Predicted Emotion Display
-        self.emotion_frame = ctk.CTkFrame(right_column, fg_color="#2a2a2a", corner_radius=15, height=150)
-        self.emotion_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.emotion_frame.pack_propagate(False)
+        # Results Container with visual enhancement
+        results_container = ctk.CTkFrame(right_column, fg_color="#2a2a2a", corner_radius=15)
+        results_container.pack(fill="x", padx=20, pady=(0, 20))
+        
+        # Predicted Emotion Section with side-by-side layout
+        prediction_section = ctk.CTkFrame(results_container, fg_color="#1e1e1e", corner_radius=12)
+        prediction_section.pack(fill="x", padx=15, pady=15)
+        
+        # Container for side-by-side layout
+        prediction_content = ctk.CTkFrame(prediction_section, fg_color="transparent")
+        prediction_content.pack(fill="both", expand=True, padx=15, pady=15)
+        
+        # Left side - Predicted emotion text and true label
+        left_side = ctk.CTkFrame(prediction_content, fg_color="transparent")
+        left_side.pack(side="left", fill="both", expand=True)
         
         ctk.CTkLabel(
-            self.emotion_frame,
-            text="Predicted Emotion",
-            font=ctk.CTkFont(size=13),
+            left_side,
+            text=" PREDICTED EMOTION",
+            font=ctk.CTkFont(size=11, weight="bold"),
             text_color="#808080"
-        ).pack(pady=(15, 5))
+        ).pack(pady=(0, 5))
         
         self.emotion_label = ctk.CTkLabel(
-            self.emotion_frame,
+            left_side,
             text="—",
-            font=ctk.CTkFont(size=42, weight="bold"),
+            font=ctk.CTkFont(size=48, weight="bold"),
             text_color="#ffffff"
         )
-        self.emotion_label.pack(pady=10)
+        self.emotion_label.pack(pady=(5, 10))
         
         self.confidence_label = ctk.CTkLabel(
-            self.emotion_frame,
+            left_side,
             text="",
-            font=ctk.CTkFont(size=14),
-            text_color="#b0b0b0"
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color="#2ecc71"
         )
-        self.confidence_label.pack()
+        self.confidence_label.pack(pady=(0, 10))
+        
+        # True label section inside left side
+        true_label_section = ctk.CTkFrame(left_side, fg_color="#252525", corner_radius=8)
+        true_label_section.pack(fill="x", pady=(5, 0))
+        
+        ctk.CTkLabel(
+            true_label_section,
+            text="✓ TRUE LABEL (pre-labeled filename)",
+            font=ctk.CTkFont(size=9, weight="bold"),
+            text_color="#808080"
+        ).pack(pady=(8, 2))
+        
+        self.true_emotion_label = ctk.CTkLabel(
+            true_label_section,
+            text="—",
+            font=ctk.CTkFont(size=16, weight="bold"),
+            text_color="#3498db"
+        )
+        self.true_emotion_label.pack(pady=(0, 8))
+        
+        # Right side - Confidence bar graph (wider)
+        right_side = ctk.CTkFrame(prediction_content, fg_color="#1a1a1a", corner_radius=8)
+        right_side.pack(side="right", fill="both", padx=(15, 0))
+        
+        ctk.CTkLabel(
+            right_side,
+            text="CONFIDENCE DISTRIBUTION",
+            font=ctk.CTkFont(size=9, weight="bold"),
+            text_color="#808080"
+        ).pack(pady=(8, 5))
+        
+        self.mini_scores_canvas_frame = ctk.CTkFrame(right_side, fg_color="#1a1a1a", width=380, height=240)
+        self.mini_scores_canvas_frame.pack(fill="both", expand=True, padx=5, pady=(0, 8))
+        self.mini_scores_canvas_frame.pack_propagate(False)
+        
+        # Match Status Indicator
+        self.match_status_frame = ctk.CTkFrame(results_container, fg_color="transparent")
+        self.match_status_frame.pack(fill="x", padx=15, pady=(0, 15))
+        
+        self.match_status_label = ctk.CTkLabel(
+            self.match_status_frame,
+            text="",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color="#95a5a6"
+        )
+        self.match_status_label.pack()
         
         # Confidence Scores
         scores_frame = ctk.CTkFrame(right_column, fg_color="#2a2a2a", corner_radius=15)
@@ -609,10 +662,48 @@ class EmotionRecognitionApp(ctk.CTk):
         if file_path:
             self.current_audio_path = file_path
             filename = os.path.basename(file_path)
-            self.file_label.configure(text=f"File: {filename}", text_color="#2ecc71")
+            
+            # Try to extract true emotion from RAVDESS filename format
+            true_emotion = self.extract_true_emotion_from_filename(filename)
+            if true_emotion:
+                self.file_label.configure(
+                    text=f"📄 {filename}\n✓ True Label: {true_emotion}", 
+                    text_color="#2ecc71"
+                )
+                # Update true label display in results
+                self.true_emotion_label.configure(text=true_emotion, text_color="#3498db")
+            else:
+                self.file_label.configure(text=f"📄 {filename}", text_color="#2ecc71")
+                self.true_emotion_label.configure(text="Not detected", text_color="#95a5a6")
+            
+            # Reset match status
+            self.match_status_label.configure(text="")
             
             # Display waveform
             self.display_waveform(file_path)
+    
+    def extract_true_emotion_from_filename(self, filename):
+        """Extract true emotion from RAVDESS filename format"""
+        try:
+            # RAVDESS format: XX-XX-XX-XX-XX-XX-XX.wav
+            # Position 3 (index 2) is the emotion code
+            parts = filename.split('-')
+            if len(parts) >= 3:
+                emotion_code = parts[2]
+                emotion_map = {
+                    '01': 'Neutral',
+                    '02': 'Calm',
+                    '03': 'Happy',
+                    '04': 'Sad',
+                    '05': 'Angry',
+                    '06': 'Fearful',
+                    '07': 'Disgust',
+                    '08': 'Surprised'
+                }
+                return emotion_map.get(emotion_code)
+        except:
+            pass
+        return None
     
     def display_waveform(self, file_path):
         """Display audio waveform"""
@@ -762,6 +853,22 @@ class EmotionRecognitionApp(ctk.CTk):
             )
             self.confidence_label.configure(text=f"Confidence: {confidence:.1f}%")
             
+            # Check if prediction matches true label
+            true_emotion = self.extract_true_emotion_from_filename(os.path.basename(self.current_audio_path))
+            if true_emotion:
+                if predicted_emotion == true_emotion:
+                    self.match_status_label.configure(
+                        text="✅ CORRECT PREDICTION!",
+                        text_color="#2ecc71"
+                    )
+                else:
+                    self.match_status_label.configure(
+                        text=f"❌ MISMATCH (Expected: {true_emotion})",
+                        text_color="#e74c3c"
+                    )
+            else:
+                self.match_status_label.configure(text="")
+            
             # Display confidence distribution
             self.display_confidence_scores(probabilities[0].cpu().numpy())
             
@@ -775,7 +882,35 @@ class EmotionRecognitionApp(ctk.CTk):
     
     def display_confidence_scores(self, probabilities):
         """Display confidence scores as bar chart"""
-        # Clear previous plot
+        # Update mini bar graph (right side of prediction section - wider)
+        for widget in self.mini_scores_canvas_frame.winfo_children():
+            widget.destroy()
+        
+        mini_fig, mini_ax = plt.subplots(figsize=(4.5, 2.8), facecolor='#1a1a1a')
+        mini_ax.set_facecolor('#1a1a1a')
+        
+        colors = [self.emotion_colors[label] for label in self.emotion_labels]
+        mini_bars = mini_ax.barh(self.emotion_labels, probabilities * 100, color=colors, alpha=0.9, edgecolor='white', linewidth=0.8)
+        
+        mini_ax.set_xlabel('Confidence (%)', color='white', fontsize=9)
+        mini_ax.set_xlim(0, 100)
+        mini_ax.tick_params(colors='white', labelsize=8)
+        mini_ax.grid(axis='x', alpha=0.3, color='white', linewidth=0.5)
+        
+        # Add value labels
+        for i, (bar, prob) in enumerate(zip(mini_bars, probabilities)):
+            width = bar.get_width()
+            mini_ax.text(width + 1, bar.get_y() + bar.get_height()/2, 
+                   f'{prob*100:.1f}%', va='center', color='white', fontsize=8, weight='bold')
+        
+        plt.tight_layout()
+        
+        mini_canvas = FigureCanvasTkAgg(mini_fig, master=self.mini_scores_canvas_frame)
+        mini_canvas.draw()
+        mini_canvas.get_tk_widget().pack(fill="both", expand=True)
+        plt.close(mini_fig)
+        
+        # Update full-size chart at bottom (keep existing functionality)
         for widget in self.scores_canvas_frame.winfo_children():
             widget.destroy()
         
@@ -810,6 +945,8 @@ class EmotionRecognitionApp(ctk.CTk):
         self.file_label.configure(text="No file selected", text_color="#808080")
         self.emotion_label.configure(text="—", text_color="#ffffff")
         self.confidence_label.configure(text="")
+        self.true_emotion_label.configure(text="—", text_color="#3498db")
+        self.match_status_label.configure(text="")
         
         # Clear plots
         for widget in self.waveform_canvas_frame.winfo_children():
@@ -820,7 +957,7 @@ class EmotionRecognitionApp(ctk.CTk):
 
 if __name__ == "__main__":
     print("="*80)
-    print("EMOTION RECOGNITION GUI v2.0 - Notebook-Based Implementation")
+    print("EMOTION RECOGNITION GUI")
     print("="*80)
     print(f"Device: {device}")
     print("Starting application...")
